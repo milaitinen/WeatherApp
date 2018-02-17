@@ -25,28 +25,40 @@ app.get('/dbtest', function(req, res) {
 });
 */
 
-app.get('/weather', function(req, res) {
-    // noinspection JSAnnotator
+// fetch city names and id
+app.get('/cities', (req, res) => {
+   connection.query(
+       'SELECT * FROM location;',
+       (err, rows) => {if (err) throw err; res.json(rows)}
+       )
+});
+
+// fetch the most resent post(s) of the given city id
+app.get('/cities/:id', (req, res) => {
     connection.query(
-        `SELECT id, name, MAX(temperature) AS temperature, postedTime, maxtemperature, mintemperature  FROM
-            ((SELECT L.id, L.name, W2.temperature, W2.postedTime, maxtemperature, mintemperature 
-                    FROM location L
-                LEFT OUTER JOIN
-                    (SELECT cityID, MAX(postedTime) AS currentPostedTime FROM weatherInfo GROUP BY cityID) W1
-                        ON L.id = W1.cityID
-                INNER JOIN
-                    (SELECT cityID, temperature, postedTime FROM weatherInfo) W2
-                        ON W1.cityID=W2.cityID AND currentPostedTime=postedTime
-                LEFT OUTER JOIN
-                    (SELECT cityID, MIN(temperature) as mintemperature FROM weatherInfo 
-                        WHERE postedTime >= now() - INTERVAL 1 DAY GROUP BY cityID) MNT
-                        ON W1.cityID=MNT.cityID
-                LEFT OUTER JOIN
-                    (SELECT cityID, MAX(temperature) as maxtemperature FROM weatherInfo 
-                        WHERE postedTime >= now() - INTERVAL 1 DAY GROUP BY cityID) MXT
-                        ON W1.cityID=MXT.cityID)
-                ORDER BY L.id
-            ) W3 GROUP BY id, postedTime, name`, function(err, rows) {if (err) throw err; res.json(rows)})
+        `SELECT temperature, postedTime FROM weatherInfo WHERE cityID = ${req.params.id} AND postedTime = 
+            (SELECT MAX(postedTime) FROM weatherInfo WHERE cityID = ${req.params.id})`,
+        (err, rows) => {if (err) throw err; res.json(rows)}
+    )
+});
+
+// fetch max temperature of the city by within the past 24h
+// return an empty array if no post has been made within the day
+app.get('/cities/:id/maxTemperature', (req, res) => {
+    connection.query(
+        `SELECT MAX(temperature) AS max FROM weatherInfo W
+            WHERE W.postedTime > DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND cityID=${req.params.id}`,
+        (err, rows) => {if (err) throw err; res.json(rows)}
+    )
+});
+
+// fetch minimum temperature of the city by id within the past 24h
+app.get('/cities/:id/minTemperature', (req, res) => {
+    connection.query(
+        `SELECT MIN(temperature) AS min FROM weatherInfo W
+            WHERE W.postedTime > DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND cityID=${req.params.id}`,
+        (err, rows) => {if (err) throw err; res.json(rows)}
+    )
 });
 
 app.post('/weather', function(req, res) {
