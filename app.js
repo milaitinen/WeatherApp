@@ -1,15 +1,9 @@
 const express = require('express');
 const app = express();
-const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'minnalaitinen',
-    password: 'awesomeWeatherApp',
-    database: 'weatherDB'
-});
+const pgp = require('pg-promise')(/*options*/)
+const db = pgp('postgres://minna:awesomeWeatherApp@localhost:5432/weatherdb')
 
 const PORT = process.env.PORT || 3001;
 
@@ -19,55 +13,50 @@ app.use(bodyParser.json());
 // HTTP request logger middleware
 app.use(morgan('dev'));
 
-/*
-app.get('/dbtest', function(req, res) {
-    connection.query('SELECT 1', function(err, rows) {res.json({ result: rows })})
+// for testing connection
+app.get('/dbtest', (req, res) => {
+    db.one('SELECT 1')
+        .then(() => res.json({ result: 'connection successful'}))
+        .catch(err => res.json({ error: err }));
 });
-*/
+
 
 // fetch city names and id
-app.get('/cities', (req, res) => {
-   connection.query(
-       'SELECT * FROM location;',
-       (err, rows) => {if (err) throw err; res.json(rows)}
-       )
+app.get('/measurements', (req, res) => {
+   db.query(
+       `WITH city AS (
+            SELECT * FROM location
+        ), recentTemp AS (
+            SELECT MAX(postedTime) AS postedTime, cityID FROM weatherinfo, city 
+                WHERE cityID = city.id GROUP BY cityID
+        ), allTemp AS (
+            SELECT W1.cityID, temperature, W1.postedTime FROM weatherinfo AS W1, recentTemp AS R 
+                WHERE W1.postedTime = R.postedTime AND W1.cityID = R.cityID
+        ), maxTemp AS (
+            SELECT cityID, MAX(temperature) AS maxtemperature FROM weatherinfo, city 
+                WHERE postedTime > current_timestamp - interval '1 day' AND cityID=city.id GROUP BY cityID 
+        ), minTemp AS (
+            SELECT cityID, MIN(temperature) AS mintemperature FROM weatherinfo, city 
+                WHERE postedTime > current_timestamp - interval '1 day' AND cityID=city.id GROUP BY cityID 
+        ) 
+        
+        SELECT DISTINCT city.id, city.name, allTemp.temperature, allTemp.postedTime, maxtemperature, mintemperature FROM (
+            city LEFT OUTER JOIN recentTemp ON city.id = recentTemp.cityID 
+                LEFT OUTER JOIN allTemp ON recentTemp.cityID = allTemp.cityID AND recentTemp.postedTime = allTemp.postedTime
+                LEFT OUTER JOIN maxTemp ON recentTemp.cityID = maxTemp.cityID
+                LEFT OUTER JOIN minTemp ON recentTemp.cityID = minTemp.cityID
+        ) ORDER BY city.id;`
+   )
+       .then(rows => res.json(rows))
+       .catch(err => res.json({ error: err }));
 });
 
-// fetch the most resent post(s) of the given city id
-app.get('/city/:id', (req, res) => {
-    connection.query(
-        `SELECT temperature, postedTime FROM weatherInfo WHERE cityID = ${req.params.id} AND postedTime = 
-            (SELECT MAX(postedTime) FROM weatherInfo WHERE cityID = ${req.params.id})`,
-        (err, rows) => {if (err) throw err; res.json(rows)}
-    )
-});
-
-// fetch max temperature of the city by within the past 24h
-// return an empty array if no post has been made within the day
-app.get('/city/:id/maxTemperature', (req, res) => {
-    connection.query(
-        `SELECT MAX(temperature) AS max FROM weatherInfo W
-            WHERE W.postedTime > DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND cityID=${req.params.id}`,
-        (err, rows) => {if (err) throw err; res.json(rows)}
-    )
-});
-
-// fetch minimum temperature of the city by id within the past 24h
-app.get('/city/:id/minTemperature', (req, res) => {
-    connection.query(
-        `SELECT MIN(temperature) AS min FROM weatherInfo W
-            WHERE W.postedTime > DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND cityID=${req.params.id}`,
-        (err, rows) => {if (err) throw err; res.json(rows)}
-    )
-});
-
-app.post('/city/:id', function(req, res) {
+app.post('/city/:id/measurement', function(req, res) {
     console.log('req.body', req.body);
-    connection.query(
-        'INSERT INTO weatherInfo (cityID, temperature) VALUES (?,?)',
-        [req.params.id, req.body.temperature],
-        function(err, rows) {if (err) throw err; res.json(rows)}
-    )
+    db.one('INSERT INTO weatherinfo (cityID, temperature) VALUES ($1,$2)',
+        [req.params.id, req.body.temperature])
+        .then(rows => res.json(rows))
+        .catch(err => res.json({ error: err }));
 });
 
 
