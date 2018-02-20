@@ -20,7 +20,7 @@ class WeatherProject extends Component {
     }
 
     refresh = () => {
-        fetch('/')
+        fetch('/measurements')
             .then(res => res.json())
             .then(cities => this.setState({ cities }))
             .catch(error => console.error(error));

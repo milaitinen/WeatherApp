@@ -26,7 +26,7 @@ app.get('/dbtest', (req, res) => {
 
 
 // fetch city names and id
-app.get('/', (req, res) => {
+app.get('/measurements', (req, res) => {
    db.query(
        `WITH city AS (
             SELECT * FROM location
