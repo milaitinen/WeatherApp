@@ -7,6 +7,9 @@ const db = pgp(process.env.DATABASE_URL);
 
 const PORT = process.env.PORT || 3001;
 
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'client/build')));
+
 // Parse incoming request bodies in a middleware
 app.use(bodyParser.json());
 
