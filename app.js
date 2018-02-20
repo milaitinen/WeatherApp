@@ -22,7 +22,7 @@ app.get('/dbtest', (req, res) => {
 
 
 // fetch city names and id
-app.get('/measurements', (req, res) => {
+app.get('/', (req, res) => {
    db.query(
        `WITH city AS (
             SELECT * FROM location
