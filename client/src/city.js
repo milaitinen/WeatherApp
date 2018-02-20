@@ -56,7 +56,7 @@ export default class City extends Component {
             {`${city.temperature}${scale}`}<br/>
         </span>
         <span className="postedTime">
-            {`Updated ${this.formatTimeStamp(city.postedTime)}`}
+            {`Updated ${this.formatTimeStamp(city.postedtime)}`}
     </span>
         </div>
         <div className="textAndTemp">
