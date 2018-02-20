@@ -1,4 +1,4 @@
-CREATE DATABASE weatherDB;USE weatherDB;
+CREATE DATABASE weatherDB;
 
 CREATE TABLE location (
     id serial not null primary key,

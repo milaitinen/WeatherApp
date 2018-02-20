@@ -1,0 +1,45 @@
+.city {
+    text-align: center;
+    border: 3px solid #fff;
+    flex: 1;
+    padding: 20px;
+    color: #fff;
+    padding-bottom: 40px;
+}
+.cityName {
+    color: inherit;
+    font: bold 34px/80px "Fira Sans", sans-serif;
+}
+.tempAndDate {
+    padding-bottom: 24px;
+}
+.currentTemp {
+    color: inherit;
+    font: 42px/60px "Fira Sans", sans-serif;
+}
+.postedTime {
+    font: 14px "Fira Sans", sans-serif;
+}
+.textAndTemp {
+    padding: 8px;
+    color: inherit;
+    font: 24px "Fira Sans", sans-serif;
+}
+.input {
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+.formText {
+    font: 14px/38px "Fira Sans", sans-serif;
+}
+.inputCustom {
+    font: 16px/35px "Fira Sans", sans-serif;
+    border: none;
+}
+.rightMargin {
+    padding: 5px;
+    font: 18px "Fira Sans", sans-serif;
+}
+.submitButton {
+    width: 60px;
+}

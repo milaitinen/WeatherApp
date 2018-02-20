@@ -1,0 +1,14 @@
+body {
+  background: white;
+}
+.page {
+  background-image: url("background.png");
+  display: flex;
+  justify-content: space-between;
+}
+.header {
+  color: #0086b3;
+  text-align: center;
+  font: bold 50px/40px "Fira Sans", sans-serif;
+  padding: 40px;
+}
