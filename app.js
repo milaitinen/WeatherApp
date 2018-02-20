@@ -2,8 +2,8 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const pgp = require('pg-promise')(/*options*/)
-const db = pgp('postgres://minna:awesomeWeatherApp@localhost:5432/weatherdb')
+const pgp = require('pg-promise')();
+const db = pgp(process.env.DATABASE_URL);
 
 const PORT = process.env.PORT || 3001;
 
