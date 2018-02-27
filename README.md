@@ -2,6 +2,8 @@
 
 A simple application which uses React, Express and PostreSQL. The application lets the user post temperature measurements from five different locations: Tokyo, Helsinki, Amsterdam, Dubai, and New York. In addition to the most recently posted temperature, the application displays the highest and the lowest temperatures from the last 24 hours.
 
+The application can be tested at https://fast-headland-99794.herokuapp.com.
+
 ## Quick start
 
 1. Create a PostgreSQL database, and run `schema.sql` to create the schema and some initial weather data.
