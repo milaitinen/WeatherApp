@@ -48,54 +48,54 @@ export default class City extends Component {
 
         return (
             <div key={city.id} className="city">
-            <span className="cityName">
-            {city.name}<br/>
-        </span>
-        <div className="tempAndDate">
-            <span className="currentTemp">
-            {`${city.temperature}${scale}`}<br/>
-        </span>
-        <span className="postedTime">
-            {`Updated ${this.formatTimeStamp(city.postedtime)}`}
-    </span>
-        </div>
-        <div className="textAndTemp">
-            <span>
-            {`High: ${(city.maxtemperature === null) ? '-' : city.maxtemperature}${scale}`}<br/>
-        </span>
-        </div>
-        <div className="textAndTemp">
-            <span>
-            {`Low: ${(city.mintemperature === null) ? '-' : city.mintemperature}${scale}`}<br/>
-        </span>
-        </div>
-        <div className={"input"}>
-            <span className="formText">
-            Submit your own measurement:<br/>
-        </span>
-        <label>
-        <input
-        type="number"
-        step="0.1"
-        min="-50"
-        max="50"
-        name="temperature"
-        onChange={this.handleChange}
-        className="inputCustom"
-        ref={ref => this.textInput = ref}
-        />
-        <span className="rightMargin">°C</span>
-        </label>
-        <input
-        value="SEND"
-        className="submitButton"
-        type="submit"
-        disabled={!isEnabled}
-        onClick={() => {this.textInput.value = ""; this.handleSubmit(city.id, newTemp)}}
-        />
-        </div>
-        </div>
-    )
+                <span className="cityName">
+                    {city.name}<br/>
+                </span>
+                <div className="tempAndDate">
+                    <span className="currentTemp">
+                        {`${city.temperature}${scale}`}<br/>
+                    </span>
+                    <span className="postedTime">
+                        {`Updated ${this.formatTimeStamp(city.postedtime)}`}
+                    </span>
+                </div>
+                <div className="textAndTemp">
+                    <span>
+                        {`High: ${(city.maxtemperature === null) ? '-' : city.maxtemperature}${scale}`}<br/>
+                    </span>
+                </div>
+                <div className="textAndTemp">
+                    <span>
+                        {`Low: ${(city.mintemperature === null) ? '-' : city.mintemperature}${scale}`}<br/>
+                    </span>
+                </div>
+                <div className={"input"}>
+                    <span className="formText">
+                        Submit your own measurement:<br/>
+                    </span>
+                    <label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            min="-50"
+                            max="50"
+                            name="temperature"
+                            onChange={this.handleChange}
+                            className="inputCustom"
+                            ref={ref => this.textInput = ref}
+                        />
+                        <span className="rightMargin">°C</span>
+                    </label>
+                    <input
+                        value="SEND"
+                        className="submitButton"
+                        type="submit"
+                        disabled={!isEnabled}
+                        onClick={() => {this.textInput.value = ""; this.handleSubmit(city.id, newTemp)}}
+                    />
+                 </div>
+            </div>
+        )
     }
 
 }

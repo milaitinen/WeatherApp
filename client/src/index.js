@@ -28,25 +28,27 @@ class WeatherProject extends Component {
 
     render() {
         const { scale } = this.state;
+
         return (
             <div>
-            <div className="header">
-            Weather Tracker
-        </div>
-        <div className="page">
-            {this.state.cities.map(city => {
-                return (
-                    <City
-                city={city}
-                scale={scale}
-                refresh={this.refresh}
-                key={city.id}
-                />
-            )
-            })}
-    </div>
-        </div>
-    );
+                <div className="header">
+                    Weather Tracker
+                </div>
+                <div className="page">
+                    {this.state.cities.map(city => {
+                        return (
+                            <City
+                                city={city}
+                                scale={scale}
+                                refresh={this.refresh}
+                                key={city.id}
+                            />
+                        )
+                    }
+                )}
+                </div>
+            </div>
+        );
     }
 }
 
